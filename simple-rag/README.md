@@ -69,7 +69,7 @@ Type a question at the `Ask:` prompt. Type `exit` to quit.
 
 ## Sample output
 
-Each `samples/` screenshot shows the same query — *"What is the punishment for organized crime under BNS?"* — run against all five variants, illustrating how retrieval strategy affects the retrieved context and final answer.
+Each `samples/` screenshot shows the same query, *"What is the punishment for organized crime under BNS?"* run against all five variants, illustrating how retrieval strategy affects the retrieved context and final answer.
 
 ## When to use which
 

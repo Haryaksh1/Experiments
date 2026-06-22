@@ -73,11 +73,11 @@ Each `samples/` screenshot shows the same query, *"What is the punishment for or
 
 ## When to use which
 
-Each variant trades off differently on speed, setup cost, and retrieval quality depending on the query type. A detailed write-up with theory and examples is here: <>
+Each variant trades off differently on speed, setup cost, and retrieval quality depending on the query type. A detailed write-up with theory and examples is here: https://medium.com/@haryakshbhardwaj/comparing-different-types-of-rag-5ac6f6a1782f
 
 ## Further reading
 
-A detailed write-up covering how each RAG variant works, their tradeoffs, and when to use which: <>
+A detailed write-up covering how each RAG variant works, their tradeoffs, and when to use which: https://medium.com/@haryakshbhardwaj/comparing-different-types-of-rag-5ac6f6a1782f
 
 ## Coming in the next update
 

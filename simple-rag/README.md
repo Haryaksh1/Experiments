@@ -1,4 +1,4 @@
-# Comparative RAG on Indian Legal Documents
+# Comparative RAG on Legal Documents
 
 A side-by-side implementation of five Retrieval-Augmented Generation (RAG) architectures, applied to the same corpus of Indian legal statutes: **BNS** (Bharatiya Nyaya Sanhita), **BNSS** (Bharatiya Nagarik Suraksha Sanhita), and **BSA** (Bharatiya Sakshya Adhiniyam).
 

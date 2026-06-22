@@ -2,7 +2,7 @@
 
 A side-by-side implementation of five Retrieval-Augmented Generation (RAG) architectures, applied to the same corpus of Indian legal statutes: **BNS** (Bharatiya Nyaya Sanhita), **BNSS** (Bharatiya Nagarik Suraksha Sanhita), and **BSA** (Bharatiya Sakshya Adhiniyam).
 
-The goal is to compare retrieval strategies, not just answer questions — all five implementations share the same chunking, embedding model, and LLM so that differences in output come from the retrieval method itself.
+The goal is to compare retrieval strategies, not just answer questions. All five implementations share the same chunking, embedding model, and LLM so that differences in output come from the retrieval method itself.
 
 ## RAG variants implemented
 
@@ -81,4 +81,4 @@ A detailed write-up covering how each RAG variant works, their tradeoffs, and wh
 
 ## Coming in the next update
 
-A quantitative comparison across all five variants using a fixed 50-question test set, with results visualized as a heatmap to make retrieval quality differences easier to compare at a glance.
+A quantitative comparison across all five variants using a fixed 50-question test set, with results visualized to make retrieval quality differences easier to compare at a glance.

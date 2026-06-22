@@ -1,0 +1,6 @@
+langchain
+langchain-community
+langchain-text-splitters
+rank-bm25
+sentence-transformers
+faiss-cpu

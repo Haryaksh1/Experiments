@@ -1,0 +1,20 @@
+id: heating
+question: Which heating system should a family install in their house?
+options: [Heat pump, Gas boiler, Pellet stove]
+criteria:
+  - {name: upfront_cost, weight: 0.25, description: lower installed cost is better}
+  - {name: running_cost, weight: 0.30, description: lower yearly running cost is better}
+  - {name: emissions, weight: 0.25, description: lower CO2 emissions are better}
+  - {name: reliability, weight: 0.20, description: fewer breakdowns and easier servicing are better}
+facts:
+  - The heat pump costs 8,000 euros installed after a 4,000 euro grant and costs 900 euros a year to run.
+  - The heat pump emits 0.6 tonnes of CO2 a year and needs specialist servicing; there are 2 local installers.
+  - The gas boiler costs 4,000 euros installed and costs 1,400 euros a year to run.
+  - The gas boiler emits 3.5 tonnes of CO2 a year and many local technicians can service it.
+  - The pellet stove costs 6,000 euros installed and costs 1,100 euros a year to run.
+  - The pellet stove emits 0.4 tonnes of CO2 a year, must be refilled by hand weekly, and local pellet supply was disrupted last winter.
+uncertainties:
+  - Future gas and electricity prices.
+constraints:
+  - The family can spend at most 10,000 euros up front.
+reference: {best: Heat pump, dominated: [], category: close}

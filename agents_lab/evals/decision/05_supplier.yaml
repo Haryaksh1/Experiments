@@ -1,0 +1,18 @@
+id: supplier
+question: Which supplier should a manufacturer choose for a key component?
+options: [Supplier A, Supplier B, Supplier C]
+criteria:
+  - {name: unit_cost, weight: 0.40, description: lower price per unit is better}
+  - {name: defect_rate, weight: 0.30, description: fewer defective units is better}
+  - {name: lead_time, weight: 0.20, description: shorter delivery time is better}
+  - {name: capacity, weight: 0.10, description: higher monthly capacity is better}
+facts:
+  - Supplier A charges $4.10 per unit, has a 0.5% defect rate, delivers in 14 days and can make 50,000 units a month.
+  - Supplier B charges $4.60 per unit, has a 1.2% defect rate, delivers in 21 days and can make 40,000 units a month.
+  - Supplier C charges $3.70 per unit, has a 2.5% defect rate, delivers in 30 days and can make 80,000 units a month.
+  - Each defective unit costs the manufacturer about $40 in rework.
+uncertainties:
+  - Whether Supplier C can lower its defect rate within a year.
+constraints:
+  - Demand is 45,000 units a month.
+reference: {best: Supplier A, dominated: [Supplier B], category: dominated}

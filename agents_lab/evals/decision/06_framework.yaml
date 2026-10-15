@@ -1,0 +1,19 @@
+id: framework
+question: Which web framework should a six-person team use for a new internal tool?
+options: [Django, Express, Rails]
+criteria:
+  - {name: team_familiarity, weight: 0.35, description: more of the team already knows it is better}
+  - {name: performance, weight: 0.15, description: more requests per second is better}
+  - {name: ecosystem, weight: 0.25, description: needed libraries available and maintained is better}
+  - {name: hiring, weight: 0.25, description: more local applicants is better}
+facts:
+  - 5 of the 6 developers know Python, 2 know JavaScript and 1 knows Ruby.
+  - In the team's benchmark Express handled 15,000 requests per second, Django 6,000 and Rails 5,000.
+  - Django includes an admin panel and auth built in; Express needs third-party packages for both, which are well maintained.
+  - Rails needs an admin plugin whose maintained fork is two years old.
+  - Last quarter the local job board had 150 JavaScript, 120 Python and 25 Ruby applicants.
+uncertainties:
+  - Whether the tool will ever need more than 1,000 requests per second.
+constraints:
+  - First version must ship within 3 months.
+reference: {best: Django, dominated: [Rails], category: dominated}

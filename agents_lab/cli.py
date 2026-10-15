@@ -1,4 +1,5 @@
 import random
+from pathlib import Path
 
 import pandas as pd
 import typer
@@ -7,6 +8,9 @@ from pydantic import BaseModel, Field
 from agents_lab.core.config import load_config
 from agents_lab.core.llm import LLM, OllamaBackend
 from agents_lab.core.trace import Run, md_table
+from agents_lab.decision_single.agent import DecisionAgent
+from agents_lab.decision_single.evaluate import evaluate, load_scenarios, report
+from agents_lab.decision_single.schemas import Problem
 
 app = typer.Typer(no_args_is_help=True, add_completion=False)
 
@@ -54,6 +58,31 @@ def bench(calls: int = 3, long_facts: int = 120, threads: int = None, config: st
             "## Means per prompt size\n\n" + md_table(t) + "\n")
     p = run.write_summary(body)
     typer.echo(p.read_text(encoding="utf-8"))
+
+
+def _live(name: str, config: str | None, **overrides) -> LLM:
+    cfg = load_config(config, **overrides)
+    return LLM(OllamaBackend(cfg), cfg, Run(name, cfg))
+
+
+@app.command()
+def decide(problem: Path, seed: int = None, config: str = None):
+    """Phase 1: run the single decision agent on one YAML problem."""
+    p = Problem.from_yaml(problem)
+    llm = _live(f"decide_{p.id}", config, seed=seed)
+    r = DecisionAgent(llm).run(p)
+    llm.run.log("decision_result", **r.to_dict())
+    typer.echo(llm.run.write_summary(r.to_markdown()).read_text(encoding="utf-8"))
+
+
+@app.command("eval-decision")
+def eval_decision(stability: int = typer.Option(4, help="scenarios that get 3 seeds (10 = full eval)"),
+                  limit: int = None, config: str = None):
+    """Phase 1 eval over agents_lab/evals/decision."""
+    llm = _live("eval_decision", config)
+    df = evaluate(load_scenarios(limit=limit), llm, stability=stability)
+    df.to_csv(llm.run.dir / "runs.csv", index=False)
+    typer.echo(llm.run.write_summary(report(df, llm)).read_text(encoding="utf-8"))
 
 
 if __name__ == "__main__":

@@ -17,5 +17,8 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools.packages.find]
 include = ["agents_lab*"]
 
+[tool.setuptools.package-data]
+agents_lab = ["evals/**/*"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]

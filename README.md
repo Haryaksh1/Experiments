@@ -65,3 +65,71 @@ matches 1 − ρ²N/(N+n) within 10%, n_eff matches, 95% CI coverage within 92�
 
 **Known limitations**: the token estimate is a character ratio, not phi3's tokenizer (that would need
 a download). Seeded outputs are reproducible on this machine and Ollama version, not across versions.
+
+## Phase 1: decision making with one agent
+
+**Built** (`agents_lab/decision_single/`): a YAML problem (question, options, weighted criteria with a
+direction, numbered facts, uncertainties, constraints, plus an eval-only `reference`) goes through one agent
+with its own system prompt and memory:
+
+1. **Clarify** (1 call): missing information and explicit assumptions.
+2. **Score** (1 call per criterion, scorer temperature 0.1): every option gets low/mid/high 0-10, the ids of
+   the facts used, a one-line justification, and `basis: fact | assumption`. Validation rejects
+   low > mid > high orderings and fact ids that aren't about that option (`Problem.facts_about`), and
+   re-asks with the exact error.
+3. **Compute in Python** (`compute.py`): PERT expected score per cell `(low + 4·mid + high)/6`, weighted
+   EV per option with all-low/all-high range, dominance on expected scores, and closed-form sensitivity: the
+   smallest single weight change (others renormalized) and the smallest single score change that flips
+   the top choice, and to whom.
+4. **Memo** (1 call): rationale, confidence, key risks, evidence that would change the decision.
+   The recommendation is the Python top-ranked option; the LLM explains it but cannot override it.
+
+```bash
+.venv\Scripts\agents-lab decide agents_lab\evals\decision\01_laptop.yaml
+.venv\Scripts\agents-lab eval-decision                 # quick: 3 seeds on the first 4 scenarios
+.venv\Scripts\agents-lab eval-decision --stability 10  # full: 3 seeds on all 10
+```
+
+**What we learned getting phi3:mini to work** (each step measured on the laptop scenario):
+
+| Design | Result |
+|---|---|
+| One call per option, fact id cited inside free text | Right answer, but facts mixed up between options (said Bolt had the "highest benchmark", the lowest) and cited other options' facts |
+| Plus check that a cited fact is about that option | Failed after 2 retries: the model rarely writes "F1" in free text |
+| Plus a dedicated `facts: [ids]` field | Passed validation, **wrong answer** (Aero by 0.02): per-option calls have no shared scale, and every call called its option "cheapest" |
+| **One call per criterion, all options compared in it** (adopted) | 6/6 calls valid on the first try, right answer, margin 0.80 |
+
+**Eval results** (quick eval: 10 scenarios at seed 0, 3 seeds on the first 4;
+[examples/phase1_eval_decision](examples/phase1_eval_decision/summary.md), single run in
+[examples/phase1_decide_laptop](examples/phase1_decide_laptop/summary.md)):
+
+| Metric | Result |
+|---|---|
+| Agreement with reference (seed 0) | 7 of 9 completed (78%, bootstrap CI 44–100%) |
+| by category | clear 1/1, dominated 4/5, close 2/3 |
+| Dominated option recommended | 0 of 17 runs |
+| Reference-dominated option also dominated in the model's scores | 5 of 5 |
+| Top-1 stable across 3 seeds | 4 of 4 scenarios (full ranking also 4 of 4) |
+| Parse failure rate | 5.4% of attempts (score 6.8%, clarify 0%, memo 0%) |
+| Failed runs | 1 of 18 (crm: low > mid ordering 3 times in a row) |
+| Time per scenario | ~180 s on an idle laptop; 300–960 s while other apps left < 2 GB RAM free |
+
+The two misses:
+- **warehouse:** phi3 called Eastgate "best proximity" (25% of customers within 2 h, against Northfield's 70%)
+  and "best" on expansion (5 acres against 20).
+- **relocation:** a close call where Lisbon and Berlin are within 0.1 by construction.
+
+**Runtime note:** the eval took 2.4 h, not the planned ~35 min. Other apps left 0.5–2.5 GB of RAM free,
+so Windows paged the model out between calls and Ollama spent 60–95 s per call reloading it. The last
+scenarios, run after memory freed up, took ~3 min each. On an idle laptop the quick eval is ~35 min.
+Close other heavy apps before long evals.
+
+**What phi3:mini could not do reliably:** compare numbers across options when each option is scored
+alone. Write fact ids inside free text. Keep low <= mid <= high (most validation failures). Keep
+justifications on the criterion being scored (they drift to other criteria).
+
+**Known limitations**: justifications are often generic ("best cost-to-performance ratio") even when the
+fact ids are right. Ten hand-written scenarios with constructed references are a small, easy-ish test,
+so the bootstrap CI is wide. Stability is measured at scorer temperature 0.1 (the brief asks for low
+temperature on scorers), so it mostly measures sampling noise at low temperature. Hard constraints
+(budget caps) are left to the scorer; Python doesn't filter infeasible options.

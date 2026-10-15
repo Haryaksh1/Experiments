@@ -1,0 +1,141 @@
+id,age,sex,race,highest degree,region,party identification,political views
+1426,66.0,female,white,high school,midwest,"independent, close to democrat","moderate, middle of the road"
+2029,71.0,male,white,high school,northeast,"independent, close to democrat",extremely liberal
+559,74.0,female,white,high school,northeast,"independent, close to democrat","moderate, middle of the road"
+1125,75.0,male,white,bachelor's,midwest,not very strong democrat,liberal
+1344,57.0,male,white,high school,midwest,other party,"moderate, middle of the road"
+2886,25.0,female,other,high school,south,not very strong republican,slightly conservative
+312,66.0,female,black,bachelor's,west,"independent, close to republican",conservative
+1415,60.0,male,white,bachelor's,midwest,strong democrat,slightly liberal
+3486,25.0,male,other,high school,south,"independent (neither, no response)",extremely conservative
+82,22.0,female,black,high school,northeast,"independent, close to democrat",liberal
+2953,42.0,male,white,high school,west,not very strong republican,conservative
+1015,55.0,male,black,high school,south,not very strong democrat,"moderate, middle of the road"
+1268,43.0,male,other,high school,west,not very strong republican,slightly conservative
+991,79.0,female,black,high school,south,strong democrat,"moderate, middle of the road"
+2979,68.0,male,white,associate/junior college,west,"independent, close to republican",conservative
+1300,35.0,female,black,less than high school,midwest,not very strong democrat,slightly conservative
+2324,28.0,female,white,bachelor's,south,strong democrat,liberal
+1814,27.0,male,other,bachelor's,west,"independent, close to democrat",extremely liberal
+2789,32.0,male,white,high school,midwest,not very strong republican,slightly conservative
+1994,20.0,male,white,bachelor's,northeast,strong republican,conservative
+1078,30.0,female,white,less than high school,south,"independent (neither, no response)","moderate, middle of the road"
+2934,78.0,male,white,graduate,west,"independent, close to republican",slightly conservative
+838,69.0,female,white,high school,south,strong republican,"moderate, middle of the road"
+530,45.0,male,white,associate/junior college,south,not very strong republican,slightly conservative
+3055,68.0,male,white,high school,west,strong republican,"moderate, middle of the road"
+1546,20.0,female,black,high school,south,"independent, close to democrat","moderate, middle of the road"
+27,59.0,male,other,high school,northeast,strong democrat,liberal
+168,65.0,female,white,high school,northeast,strong republican,"moderate, middle of the road"
+1249,53.0,male,white,graduate,west,strong republican,conservative
+1627,71.0,female,black,bachelor's,northeast,strong democrat,"moderate, middle of the road"
+2292,59.0,male,other,associate/junior college,south,"independent, close to democrat",slightly liberal
+1529,50.0,female,white,high school,south,not very strong republican,"moderate, middle of the road"
+2319,71.0,female,white,bachelor's,south,strong republican,"moderate, middle of the road"
+3266,57.0,male,white,high school,south,"independent (neither, no response)","moderate, middle of the road"
+1421,54.0,female,white,less than high school,midwest,"independent, close to democrat","moderate, middle of the road"
+1404,56.0,female,white,high school,west,strong republican,conservative
+1126,85.0,male,white,graduate,midwest,not very strong republican,conservative
+576,37.0,male,white,high school,northeast,not very strong republican,extremely conservative
+2845,55.0,male,white,graduate,midwest,not very strong republican,conservative
+1799,21.0,male,white,high school,midwest,"independent, close to republican",conservative
+2188,38.0,male,white,high school,south,strong republican,extremely conservative
+1336,73.0,male,white,graduate,midwest,not very strong democrat,liberal
+3303,51.0,female,other,high school,midwest,"independent (neither, no response)",slightly conservative
+1442,70.0,female,white,high school,midwest,not very strong democrat,"moderate, middle of the road"
+1515,56.0,male,white,graduate,south,other party,extremely conservative
+2636,34.0,female,black,less than high school,midwest,"independent (neither, no response)","moderate, middle of the road"
+1902,26.0,male,white,less than high school,west,other party,slightly conservative
+1865,61.0,male,white,bachelor's,midwest,strong democrat,liberal
+2447,53.0,male,white,high school,south,strong republican,conservative
+2809,54.0,female,white,high school,midwest,not very strong democrat,"moderate, middle of the road"
+1736,24.0,female,white,associate/junior college,south,"independent, close to republican",conservative
+547,79.0,male,white,bachelor's,south,not very strong democrat,slightly liberal
+1109,54.0,female,black,bachelor's,midwest,strong democrat,"moderate, middle of the road"
+980,29.0,female,other,less than high school,south,"independent, close to republican","moderate, middle of the road"
+1737,66.0,male,white,high school,south,strong democrat,"moderate, middle of the road"
+1925,32.0,male,white,bachelor's,south,"independent, close to democrat",slightly liberal
+2735,77.0,male,white,less than high school,midwest,strong republican,extremely conservative
+830,84.0,male,white,high school,south,strong republican,conservative
+292,67.0,female,white,graduate,west,"independent (neither, no response)","moderate, middle of the road"
+1778,69.0,male,white,graduate,midwest,strong democrat,liberal
+811,20.0,female,white,high school,south,"independent, close to democrat",liberal
+1919,50.0,male,white,less than high school,west,not very strong republican,"moderate, middle of the road"
+749,80.0,female,other,bachelor's,south,not very strong democrat,"moderate, middle of the road"
+1088,46.0,male,black,high school,south,strong democrat,slightly conservative
+3184,47.0,female,white,high school,west,"independent, close to republican",slightly conservative
+1136,69.0,female,white,high school,midwest,strong democrat,liberal
+545,35.0,female,white,graduate,south,"independent (neither, no response)",slightly liberal
+3023,68.0,male,white,less than high school,west,"independent, close to democrat","moderate, middle of the road"
+3455,31.0,male,white,less than high school,south,not very strong republican,extremely conservative
+1241,60.0,male,white,high school,west,not very strong republican,slightly liberal
+2466,68.0,female,white,high school,south,strong republican,conservative
+2309,44.0,female,black,graduate,south,not very strong democrat,slightly conservative
+2084,79.0,female,white,less than high school,south,not very strong democrat,"moderate, middle of the road"
+922,44.0,female,black,bachelor's,south,strong democrat,conservative
+2780,42.0,female,white,bachelor's,midwest,"independent, close to democrat",liberal
+1571,32.0,male,other,high school,west,"independent (neither, no response)","moderate, middle of the road"
+885,35.0,female,black,bachelor's,northeast,not very strong democrat,slightly liberal
+3452,33.0,female,white,graduate,south,strong republican,conservative
+621,33.0,male,white,high school,northeast,not very strong democrat,"moderate, middle of the road"
+888,63.0,male,black,high school,northeast,strong democrat,liberal
+1302,68.0,male,black,bachelor's,midwest,"independent, close to democrat",slightly liberal
+2140,77.0,male,white,high school,south,strong republican,extremely conservative
+3250,70.0,female,white,high school,south,strong republican,extremely conservative
+1385,21.0,female,white,less than high school,west,"independent (neither, no response)","moderate, middle of the road"
+801,69.0,male,white,less than high school,south,strong republican,"moderate, middle of the road"
+513,80.0,female,white,high school,south,strong democrat,liberal
+829,61.0,male,white,high school,south,not very strong republican,slightly conservative
+2955,69.0,female,white,graduate,west,strong democrat,liberal
+2593,72.0,male,white,high school,south,"independent, close to republican",conservative
+3333,38.0,male,white,high school,midwest,"independent (neither, no response)",extremely liberal
+2679,27.0,female,white,high school,midwest,not very strong republican,conservative
+46,50.0,female,black,bachelor's,northeast,"independent, close to democrat",liberal
+2950,67.0,female,black,less than high school,west,not very strong democrat,slightly liberal
+978,32.0,male,white,less than high school,south,"independent (neither, no response)",slightly liberal
+3516,38.0,female,white,graduate,northeast,"independent, close to democrat","moderate, middle of the road"
+2551,18.0,female,white,high school,south,not very strong democrat,slightly liberal
+720,77.0,female,white,high school,west,strong democrat,liberal
+3005,48.0,male,other,less than high school,west,"independent (neither, no response)",liberal
+2343,31.0,female,white,high school,south,not very strong democrat,"moderate, middle of the road"
+2904,51.0,female,black,high school,south,strong democrat,"moderate, middle of the road"
+1193,53.0,male,other,high school,west,"independent (neither, no response)",slightly conservative
+911,70.0,female,black,high school,south,strong democrat,extremely liberal
+1263,36.0,female,white,graduate,west,strong democrat,liberal
+1376,28.0,female,white,high school,west,"independent (neither, no response)","moderate, middle of the road"
+3538,78.0,male,white,graduate,northeast,"independent, close to democrat",slightly liberal
+2807,48.0,male,white,high school,midwest,"independent, close to republican",conservative
+357,74.0,male,white,bachelor's,midwest,strong republican,conservative
+1918,38.0,female,white,graduate,west,other party,"moderate, middle of the road"
+2470,33.0,female,white,high school,south,not very strong republican,"moderate, middle of the road"
+515,61.0,female,white,associate/junior college,south,not very strong democrat,liberal
+1900,24.0,female,other,high school,west,"independent (neither, no response)",slightly conservative
+487,69.0,female,black,graduate,south,not very strong democrat,slightly conservative
+2662,28.0,male,white,bachelor's,midwest,not very strong republican,conservative
+942,32.0,female,white,less than high school,south,"independent (neither, no response)",conservative
+2101,56.0,female,white,less than high school,south,"independent, close to democrat","moderate, middle of the road"
+3165,24.0,male,other,high school,west,"independent, close to republican",slightly conservative
+1993,75.0,male,white,bachelor's,northeast,not very strong democrat,"moderate, middle of the road"
+596,62.0,male,white,graduate,northeast,"independent, close to democrat",extremely liberal
+2682,31.0,male,white,high school,midwest,"independent (neither, no response)",extremely liberal
+1165,51.0,female,white,graduate,midwest,strong democrat,"moderate, middle of the road"
+3514,77.0,male,white,high school,south,strong democrat,slightly liberal
+882,76.0,female,black,bachelor's,northeast,strong democrat,"moderate, middle of the road"
+2110,65.0,male,white,high school,south,strong republican,slightly conservative
+1644,42.0,male,white,graduate,south,"independent, close to democrat","moderate, middle of the road"
+3051,45.0,female,other,less than high school,west,"independent (neither, no response)",conservative
+1886,55.0,female,white,bachelor's,midwest,strong democrat,liberal
+2455,59.0,female,black,high school,south,"independent (neither, no response)",slightly conservative
+1287,54.0,male,white,high school,west,"independent (neither, no response)","moderate, middle of the road"
+1597,22.0,female,white,high school,west,not very strong democrat,liberal
+259,81.0,female,black,bachelor's,west,strong democrat,liberal
+2204,39.0,female,black,associate/junior college,south,"independent (neither, no response)",slightly liberal
+1534,29.0,male,other,high school,south,"independent (neither, no response)","moderate, middle of the road"
+3376,66.0,female,white,high school,midwest,strong democrat,conservative
+2152,81.0,male,white,high school,south,strong republican,conservative
+1348,58.0,female,white,high school,midwest,strong republican,slightly conservative
+2012,34.0,female,other,graduate,northeast,"independent, close to democrat","moderate, middle of the road"
+3384,27.0,male,white,high school,south,strong republican,conservative
+2568,67.0,female,white,high school,south,strong republican,extremely conservative
+2655,67.0,male,white,high school,midwest,"independent, close to democrat","moderate, middle of the road"
+835,64.0,female,white,high school,south,"independent (neither, no response)","moderate, middle of the road"

@@ -1,0 +1,12 @@
+# A day off. Each event carries a distinctive detail that the interview later probes.
+date: "2026-03-14"
+wake: "07:00"
+sleep: "22:30"
+events:
+  - {time: "08:15", text: "Priya says the boiler broke overnight and there is no hot water in the flat."}
+  - {time: "09:30", text: "During the morning run my left knee starts to ache after 6 kilometres."}
+  - {time: "11:00", text: "Tunde calls: he got an internship offer at Siemens in Munich for the summer."}
+  - {time: "13:00", text: "The landlord texts that a plumber will come to fix the boiler on Monday at 10 am."}
+  - {time: "15:30", text: "Helen emails that the senior nurse job is now posted and applications close on Friday."}
+  - {time: "17:00", text: "My bank statement shows the gym charged me twice this month."}
+  - {time: "19:30", text: "Priya suggests a video-call dinner on Sunday to celebrate Tunde's news."}

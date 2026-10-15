@@ -133,3 +133,99 @@ fact ids are right. Ten hand-written scenarios with constructed references are a
 so the bootstrap CI is wide. Stability is measured at scorer temperature 0.1 (the brief asks for low
 temperature on scorers), so it mostly measures sampling noise at low temperature. Hard constraints
 (budget caps) are left to the scorer; Python doesn't filter infeasible options.
+
+## Phase 2: simulation with one agent
+
+**Built** (`agents_lab/simulation_single/`):
+
+- `memory.py`: memory stream of timestamped records. Retrieval score = recency + importance + relevance,
+  each min-max scaled to [0, 1], weights configurable (default 1, 1, 1). Recency = 0.995^(simulated hours
+  since last access). Importance is 1-10, rated by the model when memories are created, with all new
+  memories of a step rated in one call. Relevance is TF-IDF cosine (`core/relevance.py`, any
+  `(query, docs) -> scores` function can replace it). Top-k memories that fit the token budget are
+  returned; one that doesn't fit is skipped, never cut.
+- `agent.py`: a generative agent (Park et al., scaled down) with:
+  - a day plan of 3-5 blocks, decomposed once into 4-10 timed steps;
+  - per step: store new memories (one importance call), act on the plan and new events;
+  - a reflection when the summed importance since the last one passes the threshold (default 150): one
+    call over recent memories gives up to 3 insights, each citing the ids of the memories behind it;
+  - interviews from the CLI (a probe: the answer first lists the memory ids it uses, then gives at
+    most two sentences; it is not stored).
+- `silicon.py`: **silicon-sample mode.** Many personas (from a CSV of attributes or a `backstory` column)
+  each answer a survey in a separate call. **This is still single-agent: the personas never see each other
+  or interact.** Each persona is a profile line, not a memory stream.
+- `calibrate.py`: per item, the naive simulated estimate, PPI++ (from Phase 0) with CI, ρ, λ, n_eff,
+  individual agreement against a majority baseline, and real vs simulated spread per party subgroup.
+
+```bash
+.venv\Scripts\agents-lab persona --reflect-threshold 75          # simulate the day + recall interview
+.venv\Scripts\agents-lab interview runs\<run>\agent.json          # interactive interview
+.venv\Scripts\agents-lab recall runs\<run>\agent.json --weights 1,1,2
+.venv\Scripts\agents-lab silicon --dta data\gss\GSS2022.dta --n 40 --N 100
+```
+
+**Data:** GSS 2022 cross-section, `2022_stata.zip` (6.1 MB) from gss.norc.org, free, no registration.
+It's kept in `data/gss/` (not committed). To get it, download that zip and extract `2022/GSS2022.dta` to
+`data/gss/`. Items: death penalty (`cappun`), gun permit (`gunlaw`), marijuana (`grass`), environment
+spending (`natenvir`), happiness (`happy`). Persona attributes: age, sex, race, degree, region, party,
+ideology. Only 212 respondents answered all five items (GSS split ballots); 140 were sampled at random.
+The first 40 are the "human sample"; the other 100 are simulated-only, with their real answers held out
+as truth. Unweighted; party leaners counted with their party.
+
+### Persona mode results ([examples/phase2_persona](examples/phase2_persona/summary.md))
+
+One simulated day: 27 memories, 1 reflection with valid evidence ids, 33 calls, 2.9% parse failures,
+18 min. The run uses threshold 75 because a one-day run with about 16 new memories sums to about 100 importance
+and never reaches the default 150. Six recall questions probe details from the day's events and backstory, plus one
+question about a cousin who doesn't exist.
+
+| Run (same saved agent) | Recall | Relevant memory retrieved | "Cousin" probe |
+|---|---|---|---|
+| Free-text answers, weights 1,1,1 | 2/6 | 3/6 | passed |
+| Evidence-first answers, 1,1,1 ([example](examples/phase2_recall_w111/summary.md)) | 2/6 | 3/6 | failed (invented a lunch) |
+| Evidence-first answers, 1,1,2 ([example](examples/phase2_recall_w112/summary.md)) | 2/6 | 3/6 | passed |
+
+Diagnosis (pure Python, no model calls):
+- **Min-max scaling turns recency into noise over short spans.** Over one day, 0.995^hours only spans
+  0.93-1.0, and min-max stretches that to the full 0-1, so recency weighs as much as relevance. The plumber
+  memory (relevance 1.0) ranked 10th at 1,1,1 and 1st at relevance weight 2.
+- **TF-IDF has no synonyms.** "Money" vs "gym charged me twice", "work" vs "applications close", and
+  "brother" vs "Tunde" all score 0 relevance under any weights. That's the ceiling of a lexical relevance
+  function; an embedding model would fix it but needs a download.
+- **Evidence-first answers are shorter and grounded** (0 parse failures). With weight 1,1,2 the plumber
+  answer was exactly right, but phi3 still sometimes ignores a retrieved memory. Seven questions are too
+  few to separate the settings.
+
+### Silicon sample results ([examples/phase2_silicon](examples/phase2_silicon/summary.md))
+
+140 personas, 0 parse failures, 7.5 s per persona (18 min).
+
+| Item | Truth (all 140 real) | Naive simulated | Real n=40 | PPI++ [95% CI] | ρ | n_eff | Agreement / majority |
+|---|---|---|---|---|---|---|---|
+| death penalty: favor | 0.60 | **0.11** | 0.60 | 0.61 [0.46, 0.76] | 0.27 | 42 | 0.50 / 0.60 |
+| gun permit: favor | 0.63 | **0.89** | 0.55 | 0.54 [0.39, 0.69] | 0.37 | 44 | 0.65 / 0.55 |
+| marijuana: legal | 0.67 | 0.51 | 0.73 | 0.73 [0.59, 0.87] | -0.11 | 40 | 0.48 / 0.73 |
+| environment (1-3) | 2.59 | 2.30 | 2.48 | 2.47 [2.23, 2.71] | 0.04 | 40 | 0.45 / 0.65 |
+| happiness (1-3) | 1.93 | 1.64 | 1.77 | 1.80 [1.61, 1.99] | -0.23 | 42 | 0.38 / 0.58 |
+
+- **The naive simulated estimate is badly biased.** phi3 makes 89% of personas oppose the death penalty
+  (truth: 40%) and 89% favor gun permits (truth: 63%), whatever their profile.
+- **PPI++ protects against that bias but gains almost nothing.** ρ is low, so λ shrinks toward 0 and
+  n_eff ≈ n (40-44). The estimate stays at the real-sample mean, and its CI covered the truth on all 5 items.
+- **Individual agreement is below the majority baseline** on 4 of 5 items.
+- **Flattening is strong where the model has a fixed stance:**
+  - death penalty, within-party spread at 0-0.25 of the real spread (every simulated Independent opposed);
+  - gun permits, 0-0.33 (Democrats and Independents).
+- On environment spending, simulated Democrats are *more* spread than real ones (ratio 2.75), which
+  looks like noise rather than signal.
+
+**What phi3:mini could not do reliably:**
+- Answer opinion items in line with a demographic profile: it pushes everyone toward one stance.
+- Use a retrieved memory every time it should.
+- Find memories that share no words with the question; that's a limit of TF-IDF, not the model.
+
+**Known limitations**:
+- The keyword-based recall check is crude.
+- There is one persona and one day.
+- Results come from 140 GSS respondents who happened to receive all five items.
+- Survey answers use actor temperature 0.7 so the samples vary.

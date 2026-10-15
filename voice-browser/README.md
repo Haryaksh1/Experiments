@@ -1,5 +1,7 @@
 # Voice Browser
 
+![Voice Browser pipeline, from speech to Whisper to parser to Playwright](cover.png)
+
 A hands-free browser assistant. You speak, Whisper turns your voice into text on your own machine, a small parser works out what you meant, and Playwright does it in Chromium.
 
 Everything runs locally. No API keys, no cloud speech service, no paid tools.

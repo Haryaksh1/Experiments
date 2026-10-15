@@ -4,6 +4,10 @@ A hands-free browser assistant. You speak, Whisper turns your voice into text on
 
 Everything runs locally. No API keys, no cloud speech service, no paid tools.
 
+The full write up, covering why fixed audio windows break, the math behind them and how this compares with Thinking Machines Lab's interaction models, is on Medium.
+
+📖 [Is Speech Recognition Still the Hard Part of a Voice Controlled Browser?](https://medium.com/@haryakshbhardwaj/is-speech-recognition-still-the-hard-part-of-a-voice-controlled-browser-82067c75daad)
+
 ## How it works
 
 ```

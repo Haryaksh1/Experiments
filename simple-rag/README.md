@@ -36,7 +36,8 @@ simple-rag/
 │   ├── keyword_rag.py
 │   ├── hybrid_rag.py
 │   ├── tree_rag.py
-│   └── graph_rag.py
+│   ├── graph_rag.py
+│   └── compare_tokens.py
 └── samples/                # Example query/answer screenshots
     ├── vector_rag_sample.png
     ├── keyword_rag_sample.png
@@ -67,6 +68,36 @@ python src/vector_rag.py
 
 Type a question at the `Ask:` prompt. Type `exit` to quit.
 
+After every answer the script prints how many tokens the call used:
+
+```
+Tokens: 1287 in, 248 out, 1535 total
+```
+
+The numbers come straight from Ollama (`prompt_eval_count` and `eval_count`), so they are the model's real token counts, not an estimate.
+
+## Token usage
+
+To compare token usage across all five variants, run:
+
+```
+python src/compare_tokens.py
+```
+
+It sends the same six questions to each script and prints the average input, output, and total tokens per question.
+
+Results on `phi3:mini`, average tokens per question over the six questions:
+
+| Variant | Input | Output | Total |
+|---|---|---|---|
+| Vector RAG | 1230 | 220 | 1450 |
+| Keyword RAG | 1214 | 93 | 1307 |
+| Hybrid RAG | 1250 | 142 | 1392 |
+| Tree RAG | 1290 | 124 | 1415 |
+| Graph RAG | 1287 | 239 | 1526 |
+
+Input tokens are mostly the retrieved context, so they stay close because every variant sends at most 5 chunks of about 1000 characters. The bigger difference is in output. Keyword RAG gave the shortest answers and Graph RAG the longest, partly because its prompt asks for section numbers and penalties. Output tokens will vary a little between runs since the model is not deterministic.
+
 ## Sample output
 
 Each `samples/` screenshot shows the same query, *"What is the punishment for organized crime under BNS?"* run against all five variants, illustrating how retrieval strategy affects the retrieved context and final answer.
@@ -81,4 +112,4 @@ A detailed write-up covering how each RAG variant works, their tradeoffs, and wh
 
 ## Coming in the next update
 
-A quantitative comparison across all five variants using a fixed 50-question test set, with results visualized to make retrieval quality differences easier to compare at a glance.
+A quantitative comparison of answer quality across all five variants using a fixed 50-question test set, with results visualized to make retrieval quality differences easier to compare at a glance.

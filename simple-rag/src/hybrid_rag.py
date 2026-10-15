@@ -114,7 +114,12 @@ Question:
 """
 
     # Generate answer
-    response = llm.invoke(prompt)
+    result = llm.generate([prompt]).generations[0][0]
+    response = result.text
+    # Ollama reports exact token counts for the prompt and the answer
+    in_tokens = result.generation_info.get("prompt_eval_count", 0)
+    out_tokens = result.generation_info.get("eval_count", 0)
 
     print("\nAnswer:\n")
     print(response)
+    print(f"\nTokens: {in_tokens} in, {out_tokens} out, {in_tokens + out_tokens} total")

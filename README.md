@@ -229,3 +229,113 @@ Diagnosis (pure Python, no model calls):
 - There is one persona and one day.
 - Results come from 140 GSS respondents who happened to receive all five items.
 - Survey answers use actor temperature 0.7 so the samples vary.
+
+## Phase 3: decision making with multiple agents across multiple steps
+
+**Built** (`agents_lab/decision_multi/`): a three-step pipeline. **Only Step 2 is multi-agent.**
+
+1. **Framer** (one agent, `pipeline.py`): turns the YAML problem into a brief: one summary per option,
+   explicit assumptions, open questions. Fact ids per option are attached by Python (`facts_about`),
+   because phi3 put prices and benchmark numbers in a model-written `facts` field.
+2. **Deliberation** (`deliberation.py`, exactly three agents conversing through `core.run_conversation`):
+   - **Advocate:** argues for the option it thinks is strongest.
+   - **Skeptic:** attacks every option and the shared assumptions.
+   - **Analyst:** checks the others' claims against the brief and flags unsupported ones.
+
+   Each agent has its own system prompt and its own memory of its previous turns. Round 0 is
+   independent; then R rounds (default 2) in which each agent sees a deterministic rolling summary plus
+   the previous-round turn of each other agent. Every turn is structured:
+   - the option it would pick if forced (used for conformity);
+   - a position;
+   - 1-2 claims with supporting fact numbers;
+   - at most one accepted and one rejected claim of others, by claim id, with reasons;
+   - for the Analyst, up to 2 flags on unsupported claims.
+
+   Claim ids (e.g. `SKE1.2`) are assigned in Python. Claim references are an **enum of the ids that
+   agent was actually shown**, and fact numbers an enum of 1..n. With nothing shown (round 0, ablation D)
+   the reference lists are forced empty, so the grammar can't invent references.
+3. **Judge** (one agent): scores every option with the Phase 1 rubric (one call per criterion), using
+   the brief and the deliberation as context. For each criterion it gives `cited_claims`, the claim ids
+   that changed its scores (an enum of real ids). Python computes the ranking and sensitivity exactly as
+   in Phase 1.
+
+```bash
+.venv\Scripts\agents-lab deliberate agents_lab\evals\decision\01_laptop.yaml [--isolated]
+.venv\Scripts\agents-lab eval-multi-decision --scenarios laptop,warehouse,relocation   # quick
+.venv\Scripts\agents-lab eval-multi-decision --scenarios all --seeds 3                 # full (overnight+)
+```
+
+**Ablations** (`ablations.py`), each on the same scenario and seed:
+- **A:** the Phase 1 agent.
+- **B:** single-agent ensemble. Phase 1 clarify + score is sampled K times at actor temperature 0.7
+  (at the scorer's 0.1 the samples would be near copies), and low/mid/high are averaged. K = round(tokens
+  of C / tokens of one A sample). A sample that fails validation is dropped, but its tokens still count.
+- **C:** the full pipeline.
+- **D:** the same pipeline with the three agents unable to see each other in Step 2. Each still sees its
+  own history; the Judge still reads all turns.
+
+**Equal budget:** B, C and D are matched on tokens. A is the unmatched reference point. Metrics:
+- accuracy against the reference and dominated-option errors;
+- ranking stability across seeds (needs `--seeds` > 1);
+- Analyst flags against a Python proxy for "unsupported" (claims citing no fact);
+- conformity: an agent abandons a preferred option that matched the reference after a round;
+- tokens and wall time.
+
+**Quick-eval scenario choice:** laptop (A right in Phase 1), warehouse and relocation (A wrong in
+Phase 1), chosen before any Phase 3 result was seen. This choice gives C and D room to improve on A,
+and it is reported as such.
+
+**Single pipeline run** ([examples/phase3_deliberate_laptop](examples/phase3_deliberate_laptop/summary.md)):
+14 calls, 0 parse failures, ~14 min, correct (Core 13). The agents accept, reject and flag each other's
+claims by id, and the Judge cites specific claims (e.g. performance: ADV2.1, SKE2.1).
+
+**Ablation results** (quick eval, seed 0;
+[examples/phase3_eval_multi_decision](examples/phase3_eval_multi_decision/summary.md)):
+
+| Scenario (reference) | A single | B ensemble | C pipeline | D isolated |
+|---|---|---|---|---|
+| laptop (Core 13) | Core 13 ✓ | Core 13 ✓ (K=5, 4 samples ok) | Core 13 ✓ | Core 13 ✓ |
+| warehouse (Northfield) | Eastgate ✗ | Eastgate ✗ (6/6 samples) | Eastgate ✗ | **Northfield ✓** |
+| relocation (Berlin, close call) | Lisbon ✗ | Lisbon ✗ (6/6) | Toronto ✗ | failed (Judge: low > mid 3×) |
+| **accuracy** | 1/3 | 1/3 | 1/3 | 2/2 completed |
+| dominated option recommended | 0 | 0 | 0 | 0 |
+| mean tokens | 5.3k | 33.1k | 23.4k | 21.0k |
+
+| Step 2 metric | C (agents see each other) | D (isolated) |
+|---|---|---|
+| Claims citing no fact (Python proxy) | 12 | 10 |
+| Analyst flags (on no-fact claims) | 4 (2) | 0 by construction: it sees no claims |
+| Conformity: left a reference-matching option | 1 of 9 opportunities | 1 of 6 (self-driven drift) |
+| Judge criteria citing a claim | 2 of 12 | 0 of 8 |
+
+**Honest reading:**
+- **C does not beat A or B here.** All three got 1 of 3. D's 2 of 2 is on one fewer scenario.
+- **Three scenarios and one seed can't separate the conditions statistically.** Every bootstrap CI spans
+  0-100%, and seed stability was not measured.
+- **The warehouse case is telling.** Isolated agents in D each formed their own view and the Judge got it
+  right. In C, the agents converged on the shared wrong reading of the proximity facts. That's consistent
+  with conversation spreading an early error, but one case is an anecdote, not evidence.
+- **The Analyst catches few unsupported claims:** 2 of the 12 no-fact claims in C, and its reasons are
+  often irrelevant.
+- **The Framer's brief contained factual errors that nobody challenged**, e.g. Core 13 called "most
+  expensive".
+
+**Budget and runtime:**
+- **B overspent:** 33k tokens against C's 23k, because samples at temperature 0.7 broke low ≤ mid ≤ high
+  often (26% of score attempts failed) and failed attempts count.
+- **Judge failures:** 33% of Judge attempts failed on the same ordering rule; one run failed outright.
+- **Time per scenario:** about 1 h for A+B+C+D. D's laptop and warehouse wall times include 54- and
+  45-minute Windows standby pauses; the calls themselves took about 20 min each.
+- **Full eval** (10 scenarios × 3 seeds): about 30 h of compute. Not run.
+
+**What phi3:mini could not do reliably here:**
+- invent valid references (claim ids, fact numbers) unless the grammar forbids it;
+- keep strings short unless they are capped hard;
+- keep low ≤ mid ≤ high at temperature 0.7;
+- check claims against facts as the Analyst;
+- write a fact-faithful brief as the Framer.
+
+**Known limitations:**
+- 3 scenarios and 1 seed; the scenarios were chosen as described above.
+- The "unsupported claim" proxy is crude: no fact cited.
+- Each agent's own system prompt means Ollama can't reuse the shared brief from its prompt cache.

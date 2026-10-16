@@ -196,5 +196,73 @@ def silicon(dta: Path = typer.Option(None, help="GSS Stata file (enables calibra
     typer.echo(llm.run.write_summary(body).read_text(encoding="utf-8"))
 
 
+@app.command()
+def deliberate(problem: Path, rounds: int = 2, isolated: bool = False, seed: int = None, config: str = None):
+    """Phase 3: Framer -> three-agent deliberation -> Judge on one YAML problem."""
+    from agents_lab.decision_multi.pipeline import run_pipeline
+
+    p = Problem.from_yaml(problem)
+    llm = _live(f"deliberate_{p.id}", config, seed=seed)
+    r = run_pipeline(p, llm, rounds=rounds, visible=not isolated)
+    typer.echo(llm.run.write_summary(r.to_markdown()).read_text(encoding="utf-8"))
+
+
+@app.command("eval-multi-decision")
+def eval_multi_decision(scenarios: str = typer.Option("laptop,warehouse,relocation", help="comma-separated ids; 'all'"),
+                        rounds: int = 2, seeds: int = 1, config: str = None):
+    """Phase 3 ablations A-D (equal token budget for B, C, D)."""
+    from agents_lab.decision_multi.ablations import evaluate as eval_multi
+    from agents_lab.decision_multi.ablations import report as report_multi
+
+    ps = load_scenarios()
+    if scenarios != "all":
+        want = scenarios.split(",")
+        ps = [p for p in ps if p.id in want]
+    llm = _live("eval_multi_decision", config)
+    df = eval_multi(ps, llm, rounds=rounds, n_seeds=seeds)
+    df.to_csv(llm.run.dir / "rows.csv", index=False)
+    typer.echo(llm.run.write_summary(report_multi(df, llm)).read_text(encoding="utf-8"))
+
+
+def _bots(spec: str) -> list[tuple[int, str]]:
+    """'conditional@2,never@1' -> [(2, 'conditional'), (1, 'never')]"""
+    out = []
+    for part in filter(None, spec.split(",")):
+        kind, seat = part.split("@")
+        if kind not in ("always", "never", "conditional") or seat not in ("0", "1", "2"):
+            raise typer.BadParameter(f"bad bot spec {part!r}: use always|never|conditional@0|1|2")
+        out.append((int(seat), kind))
+    return out
+
+
+@app.command()
+def simulate(game: Path = EVALS / "public_goods.yaml", chat: bool = True, bot: str = "", config: str = None):
+    """Phase 4: Scenario Builder -> three generative agents playing -> Observer (one condition)."""
+    from agents_lab.simulation_multi.pipeline import GameConfig, build, condition_markdown, run_condition
+
+    cfg = GameConfig.from_yaml(game)
+    llm = _live("simulate", config)
+    built = build(cfg, cfg.make_scenario(), llm, llm.cfg.seed)
+    bots = _bots(bot)
+    r = run_condition(cfg, built, llm, chat=chat, bot=bots[0] if bots else None, label="single")
+    typer.echo(llm.run.write_summary(condition_markdown(r)).read_text(encoding="utf-8"))
+
+
+@app.command("eval-simulation")
+def eval_simulation(game: Path = EVALS / "public_goods.yaml", bots: str = typer.Option(
+        "conditional@2", help="bot substitutions, e.g. 'always@2,never@2,conditional@2'"), config: str = None):
+    """Phase 4 eval: chat vs no chat vs fixed-strategy bots, same personas."""
+    from agents_lab.simulation_multi.pipeline import GameConfig, comparison, condition_markdown, evaluate as ev4
+
+    cfg = GameConfig.from_yaml(game)
+    llm = _live("eval_simulation", config)
+    built, results = ev4(cfg, llm, _bots(bots))
+    personas = "\n".join(f"- {p.name} ({p.age}): {p.background} Goal: {p.goal} Private: {p.private_info}"
+                         for p in built.personas)
+    body = "\n".join(["## Phase 4: public goods game", "", f"World: {built.world_state}", "", personas, "",
+                      "### Comparison", "", comparison(results), "", *[condition_markdown(r) for r in results]])
+    typer.echo(llm.run.write_summary(body).read_text(encoding="utf-8"))
+
+
 if __name__ == "__main__":
     app()

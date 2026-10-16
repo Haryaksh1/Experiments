@@ -71,8 +71,9 @@ class DecisionResult:
 class DecisionAgent:
     """Own system prompt (role + goal), own memory of what it produced, no tools."""
 
-    def __init__(self, llm: LLM, seed: int | None = None, system: str = SYSTEM):
+    def __init__(self, llm: LLM, seed: int | None = None, system: str = SYSTEM, low_temperature_scoring: bool = True):
         self.llm, self.seed, self.system = llm, seed, system
+        self.low_temperature_scoring = low_temperature_scoring  # False only for ensemble sampling (Phase 3 B)
         self.memory: dict = {}
 
     def clarify(self, p: Problem) -> Clarification:
@@ -82,16 +83,21 @@ class DecisionAgent:
         self.memory["clarification"] = c
         return c
 
-    def score(self, p: Problem, context: str, tag: str = "score") -> dict[str, dict[str, Cell]]:
+    def score(self, p: Problem, context: str, tag: str = "score", schema=None,
+              task_suffix: str = "") -> dict[str, dict[str, Cell]]:
         """One scorer call per criterion, all options compared in that call (low temperature).
-        `context` sits between problem and task."""
-        schema = score_schema(p)
-        cells = {o: {} for o in p.options}
+        `context` sits between problem and task. `schema` may extend score_schema(p) with extra fields;
+        raw replies are kept in memory["raw"][criterion]."""
+        schema = schema or score_schema(p)
+        cells, raw = {o: {} for o in p.options}, {}
         for crit in p.criteria:
-            user = f"{p.prompt()}\n\n{context}\n\n{score_task(p, crit)}"
-            r = self.llm.structured(self.system, user, schema, tag=tag, judge=True, seed=self.seed, max_tokens=450)
+            user = f"{p.prompt()}\n\n{context}\n\n{score_task(p, crit)}{task_suffix}"
+            r = self.llm.structured(self.system, user, schema, tag=tag, judge=self.low_temperature_scoring,
+                                    seed=self.seed, max_tokens=450)
+            raw[crit.name] = r
             for i, o in enumerate(p.options):
                 cells[o][crit.name] = getattr(r, f"o{i}")
+        self.memory["raw"] = raw
         self.memory["scores"] = cells
         return cells
 

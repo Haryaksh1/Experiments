@@ -86,7 +86,11 @@ class Analysis:
 
 
 def analyze(cells: dict[str, dict[str, Cell]], weights: dict[str, float]) -> Analysis:
-    L, M, H = matrices(cells)
+    return analyze_lmh(*matrices(cells), weights)
+
+
+def analyze_lmh(L: pd.DataFrame, M: pd.DataFrame, H: pd.DataFrame, weights: dict[str, float]) -> Analysis:
+    """Same as analyze() from low/mid/high matrices (e.g. averaged over ensemble samples)."""
     w = pd.Series(weights)[M.columns]
     w = w / w.sum()
     E = (L + 4 * M + H) / 6  # PERT mean of the three-point estimate

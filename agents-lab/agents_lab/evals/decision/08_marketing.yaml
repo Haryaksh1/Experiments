@@ -1,0 +1,17 @@
+id: marketing
+question: Which channel should a B2B software company spend its $50,000 lead-generation budget on?
+options: [Search ads, Trade shows, Influencers]
+criteria:
+  - {name: cost_per_lead, weight: 0.40, description: lower cost per lead is better}
+  - {name: lead_quality, weight: 0.30, description: higher share of qualified leads is better}
+  - {name: speed, weight: 0.15, description: faster first results are better}
+  - {name: measurability, weight: 0.15, description: more precise tracking is better}
+facts:
+  - Search ads cost $80 per lead, 25% of leads become qualified, results arrive within 2 weeks and every lead is fully tracked.
+  - Trade shows cost $300 per lead, 40% of leads become qualified, the next show is in 5 months and tracking uses badge scans.
+  - Influencers cost $150 per lead, 8% of leads become qualified because the audience is mostly consumers, results arrive in 4 weeks and tracking uses promo codes only.
+uncertainties:
+  - Whether search ad prices will rise next quarter.
+constraints:
+  - Results are needed within this quarter.
+reference: {best: Search ads, dominated: [Influencers], category: dominated}

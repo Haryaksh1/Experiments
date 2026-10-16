@@ -1,0 +1,321 @@
+{
+ "persona": {
+  "name": "Maya Okafor",
+  "age": 34,
+  "description": "A pediatric nurse in Leeds who loves running. Practical and warm, a little anxious about money.",
+  "backstory": [
+   "I work 12-hour shifts at Leeds Children's Hospital, usually three days a week.",
+   "I am training for the Leeds half marathon in May.",
+   "My younger brother Tunde lives in Manchester and studies engineering.",
+   "I share a flat with my friend Priya, who is a primary school teacher.",
+   "I am saving money for a deposit on a flat of my own.",
+   "My manager Helen mentioned that a senior nurse position may open this spring."
+  ]
+ },
+ "now": "2026-03-14T22:30:00",
+ "reflect_threshold": 75,
+ "reflections": 1,
+ "importance_since_reflection": 27,
+ "steps": [
+  {
+   "time": "07:00",
+   "action": "Start my morning run for half marathon training."
+  },
+  {
+   "time": "08:00",
+   "action": "Cool down, shower and have a healthy breakfast to replenish energy levels after running."
+  },
+  {
+   "time": "09:00",
+   "action": "Arrive at Leeds Children's Hospital for work."
+  },
+  {
+   "time": "12:30",
+   "action": "Lunch break to refuel and have a chat with flatmate Priya about students' progress."
+  },
+  {
+   "time": "14:30",
+   "action": "Return from lunch, prepare for afternoon community meeting on green spaces in Leeds."
+  },
+  {
+   "time": "15:00",
+   "action": "Attend the local council-organized community meeting to discuss environmental improvements and advoc"
+  },
+  {
+   "time": "16:30",
+   "action": "Meeting concludes, head back to work."
+  },
+  {
+   "time": "17:00",
+   "action": "End my shift at the hospital. Leave promptly if necessary for evening study session."
+  },
+  {
+   "time": "18:30",
+   "action": "Return home, relax and have dinner to recover from workday energy expenditure."
+  },
+  {
+   "time": "20:30",
+   "action": "Begin studying for my potential senior nurse position interview. Review relevant material thoroughly"
+  }
+ ],
+ "memories": [
+  {
+   "id": 0,
+   "kind": "observation",
+   "text": "I work 12-hour shifts at Leeds Children's Hospital, usually three days a week.",
+   "created": "2026-03-13T07:00:00",
+   "last_access": "2026-03-14T09:00:00",
+   "importance": 7,
+   "evidence": []
+  },
+  {
+   "id": 1,
+   "kind": "observation",
+   "text": "I am training for the Leeds half marathon in May.",
+   "created": "2026-03-13T07:00:00",
+   "last_access": "2026-03-14T20:30:00",
+   "importance": 8,
+   "evidence": []
+  },
+  {
+   "id": 2,
+   "kind": "observation",
+   "text": "My younger brother Tunde lives in Manchester and studies engineering.",
+   "created": "2026-03-13T07:00:00",
+   "last_access": "2026-03-14T09:00:00",
+   "importance": 5,
+   "evidence": []
+  },
+  {
+   "id": 3,
+   "kind": "observation",
+   "text": "I share a flat with my friend Priya, who is a primary school teacher.",
+   "created": "2026-03-13T07:00:00",
+   "last_access": "2026-03-14T08:00:00",
+   "importance": 4,
+   "evidence": []
+  },
+  {
+   "id": 4,
+   "kind": "observation",
+   "text": "I am saving money for a deposit on a flat of my own.",
+   "created": "2026-03-13T07:00:00",
+   "last_access": "2026-03-14T20:30:00",
+   "importance": 9,
+   "evidence": []
+  },
+  {
+   "id": 5,
+   "kind": "observation",
+   "text": "My manager Helen mentioned that a senior nurse position may open this spring.",
+   "created": "2026-03-13T07:00:00",
+   "last_access": "2026-03-14T09:00:00",
+   "importance": 6,
+   "evidence": []
+  },
+  {
+   "id": 6,
+   "kind": "plan",
+   "text": "My plan for today: 07:00-08:00 Morning run for half marathon training; 09:00-12:30 Work at Leeds Children's Hospital, focusing on pediatric care and patient assessments; 13:30-14:30 Lunch with my flatmate Priya to discuss our students' progress; 15:00-16:30 Attend a community meeting about increasing local green spaces in Leeds; 17:00-22:00 Study for my potential senior nurse position interview and prepare financial statements to save more",
+   "created": "2026-03-14T07:00:00",
+   "last_access": "2026-03-14T20:30:00",
+   "importance": 8,
+   "evidence": []
+  },
+  {
+   "id": 7,
+   "kind": "action",
+   "text": "starting morning run",
+   "created": "2026-03-14T08:00:00",
+   "last_access": "2026-03-14T08:00:00",
+   "importance": 3,
+   "evidence": []
+  },
+  {
+   "id": 8,
+   "kind": "action",
+   "text": "Say 'After my run, I'll cool down by stretching for a few minutes to prevent muscle soreness before showering.' The original plan remains unchanged as",
+   "created": "2026-03-14T09:00:00",
+   "last_access": "2026-03-14T16:30:00",
+   "importance": 7,
+   "evidence": []
+  },
+  {
+   "id": 9,
+   "kind": "observation",
+   "text": "Priya says the boiler broke overnight and there is no hot water in the flat.",
+   "created": "2026-03-14T09:00:00",
+   "last_access": "2026-03-14T20:30:00",
+   "importance": 9,
+   "evidence": []
+  },
+  {
+   "id": 10,
+   "kind": "action",
+   "text": "Arrive at Leeds Children's Hospital for work",
+   "created": "2026-03-14T12:30:00",
+   "last_access": "2026-03-14T16:30:00",
+   "importance": 7,
+   "evidence": []
+  },
+  {
+   "id": 11,
+   "kind": "observation",
+   "text": "During the morning run my left knee starts to ache after 6 kilometres.",
+   "created": "2026-03-14T12:30:00",
+   "last_access": "2026-03-14T12:30:00",
+   "importance": 5,
+   "evidence": []
+  },
+  {
+   "id": 12,
+   "kind": "observation",
+   "text": "Tunde calls: he got an internship offer at Siemens in Munich for the summer.",
+   "created": "2026-03-14T12:30:00",
+   "last_access": "2026-03-14T20:30:00",
+   "importance": 8,
+   "evidence": []
+  },
+  {
+   "id": 13,
+   "kind": "action",
+   "text": "cool_down",
+   "created": "2026-03-14T14:30:00",
+   "last_access": "2026-03-14T14:30:00",
+   "importance": 3,
+   "evidence": []
+  },
+  {
+   "id": 14,
+   "kind": "observation",
+   "text": "The landlord texts that a plumber will come to fix the boiler on Monday at 10 am.",
+   "created": "2026-03-14T14:30:00",
+   "last_access": "2026-03-14T15:00:00",
+   "importance": 4,
+   "evidence": []
+  },
+  {
+   "id": 15,
+   "kind": "action",
+   "text": "Return from lunch",
+   "created": "2026-03-14T15:00:00",
+   "last_access": "2026-03-14T18:30:00",
+   "importance": 3,
+   "evidence": []
+  },
+  {
+   "id": 16,
+   "kind": "action",
+   "text": "attend a community meeting about improving local green spaces",
+   "created": "2026-03-14T16:30:00",
+   "last_access": "2026-03-14T16:30:00",
+   "importance": 5,
+   "evidence": []
+  },
+  {
+   "id": 17,
+   "kind": "observation",
+   "text": "Helen emails that the senior nurse job is now posted and applications close on Friday.",
+   "created": "2026-03-14T16:30:00",
+   "last_access": "2026-03-14T16:30:00",
+   "importance": 7,
+   "evidence": []
+  },
+  {
+   "id": 18,
+   "kind": "action",
+   "text": "Review Senior Nurse Job Application",
+   "created": "2026-03-14T17:00:00",
+   "last_access": "2026-03-14T17:00:00",
+   "importance": 3,
+   "evidence": []
+  },
+  {
+   "id": 19,
+   "kind": "observation",
+   "text": "My bank statement shows the gym charged me twice this month.",
+   "created": "2026-03-14T17:00:00",
+   "last_access": "2026-03-14T17:00:00",
+   "importance": 5,
+   "evidence": []
+  },
+  {
+   "id": 20,
+   "kind": "reflection",
+   "text": "Balancing professional responsibilities with personal goals and commitments",
+   "created": "2026-03-14T17:00:00",
+   "last_access": "2026-03-14T17:00:00",
+   "importance": 7,
+   "evidence": [
+    1,
+    2,
+    3,
+    4,
+    5
+   ]
+  },
+  {
+   "id": 21,
+   "kind": "reflection",
+   "text": "Facing physical challenges in training while maintaining dedication to a goal",
+   "created": "2026-03-14T17:00:00",
+   "last_access": "2026-03-14T20:30:00",
+   "importance": 9,
+   "evidence": [
+    7,
+    8,
+    9,
+    11
+   ]
+  },
+  {
+   "id": 22,
+   "kind": "reflection",
+   "text": "Navigating family relationships and career opportunities simultaneously",
+   "created": "2026-03-14T17:00:00",
+   "last_access": "2026-03-14T20:30:00",
+   "importance": 8,
+   "evidence": [
+    2,
+    10,
+    12
+   ]
+  },
+  {
+   "id": 23,
+   "kind": "action",
+   "text": "Maya is ending her shift at Leeds Children's Hospital.",
+   "created": "2026-03-14T18:30:00",
+   "last_access": "2026-03-14T18:30:00",
+   "importance": 3,
+   "evidence": []
+  },
+  {
+   "id": 24,
+   "kind": "action",
+   "text": "Returning home",
+   "created": "2026-03-14T20:30:00",
+   "last_access": "2026-03-14T20:30:00",
+   "importance": 7,
+   "evidence": []
+  },
+  {
+   "id": 25,
+   "kind": "observation",
+   "text": "Priya suggests a video-call dinner on Sunday to celebrate Tunde's news.",
+   "created": "2026-03-14T20:30:00",
+   "last_access": "2026-03-14T20:30:00",
+   "importance": 9,
+   "evidence": []
+  },
+  {
+   "id": 26,
+   "kind": "action",
+   "text": "continue",
+   "created": "2026-03-14T22:30:00",
+   "last_access": "2026-03-14T22:30:00",
+   "importance": 8,
+   "evidence": []
+  }
+ ]
+}

@@ -1,0 +1,9 @@
+# expect: the answer passes if it contains any of these (case-insensitive).
+# source: "event" or "backstory" (recall) or "none" (nothing in memory: the agent should not invent it).
+- {question: "What news did your brother give you today?", expect: [siemens, internship, munich], source: event}
+- {question: "When is the plumber coming?", expect: [monday], source: event}
+- {question: "How did your run go this morning?", expect: [knee], source: event}
+- {question: "Is there anything at work you need to act on this week?", expect: [senior, friday, appl], source: event}
+- {question: "Did anything annoy you about money today?", expect: [gym, twice, charged], source: event}
+- {question: "What race are you training for?", expect: [half marathon, half-marathon], source: backstory}
+- {question: "What did you have for lunch with your cousin Daniel today?", expect: ["don't know", "do not know", "not sure", "no cousin", "don't have", "didn't", "did not", "don't recall", "do not recall", "haven't"], source: none}

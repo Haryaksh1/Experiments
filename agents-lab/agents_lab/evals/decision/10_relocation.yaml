@@ -1,0 +1,19 @@
+id: relocation
+question: Which city should a software engineer relocate to?
+options: [Lisbon, Berlin, Toronto]
+criteria:
+  - {name: cost_of_living, weight: 0.30, description: lower rent is better}
+  - {name: job_market, weight: 0.30, description: more open software jobs is better}
+  - {name: climate, weight: 0.20, description: more sunshine is better}
+  - {name: visa_ease, weight: 0.20, description: faster and simpler work permit is better}
+facts:
+  - A one-bedroom flat costs 1,300 euros a month in Lisbon, 1,500 in Berlin and about 1,800 in Toronto.
+  - There are about 4,000 open software jobs in Lisbon, 12,000 in Berlin and 15,000 in Toronto.
+  - Lisbon gets about 2,800 hours of sunshine a year, Berlin 1,600 and Toronto 2,000.
+  - Lisbon offers a remote-work visa in about 2 months; Berlin issues an EU Blue Card in about 1 month with a job offer.
+  - Toronto permanent residence through Express Entry takes 6 to 12 months.
+uncertainties:
+  - Whether the engineer will receive a job offer before moving.
+constraints:
+  - The move should happen within 6 months.
+reference: {best: Berlin, dominated: [], category: close}

@@ -1,0 +1,10 @@
+scenario: public_goods
+theme: Three neighbours on the same street each get 10 tokens per round and can pay into a shared fund for a community garden.
+rounds: 8
+endowment: 10
+multiplier: 1.5
+reflect_threshold: 150
+private_fact:
+  seat: 0
+  text: The city council will add a grant to the garden fund if the fund reaches 100 tokens in total.
+  keywords: [council, grant]

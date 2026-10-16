@@ -1,0 +1,24 @@
+[project]
+name = "agents-lab"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = ["ollama>=0.4", "pydantic>=2", "numpy", "pandas", "scikit-learn", "typer", "pyyaml"]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[project.scripts]
+agents-lab = "agents_lab.cli:app"
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["agents_lab*"]
+
+[tool.setuptools.package-data]
+agents_lab = ["evals/**/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

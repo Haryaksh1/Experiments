@@ -1,0 +1,20 @@
+id: job_offer
+question: Which job offer should a mid-career analyst accept?
+options: [Startup, Bank, University]
+criteria:
+  - {name: salary, weight: 0.30, description: higher pay is better}
+  - {name: growth, weight: 0.30, description: faster skill and career growth is better}
+  - {name: work_life, weight: 0.20, description: fewer weekly hours is better}
+  - {name: stability, weight: 0.20, description: lower risk of losing the job is better}
+facts:
+  - The Startup pays $70,000 plus equity of unknown value and expects 60-hour weeks.
+  - The Startup has cash for 9 months and offers broad responsibility from day one.
+  - The Bank pays $95,000, expects 50-hour weeks and has a structured promotion track reviewed every 2 years.
+  - The Bank is a 100-year-old firm that has not had layoffs in this department in 10 years.
+  - The University pays $65,000, expects 40-hour weeks and promotes slowly by seniority.
+  - The University position is a permanent staff role.
+uncertainties:
+  - Whether the Startup will raise more money.
+constraints:
+  - The analyst needs at least $60,000 a year.
+reference: {best: Bank, dominated: [], category: clear}

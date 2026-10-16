@@ -1,0 +1,20 @@
+id: warehouse
+question: Where should a distributor open its new warehouse?
+options: [Northfield, Riverside, Eastgate]
+criteria:
+  - {name: rent, weight: 0.30, description: lower rent is better}
+  - {name: proximity, weight: 0.35, description: more customers within 2 hours is better}
+  - {name: labor, weight: 0.20, description: easier hiring of warehouse staff is better}
+  - {name: expansion, weight: 0.15, description: more room to expand is better}
+facts:
+  - Northfield rent is $9 per square foot; 70% of customers are within 2 hours.
+  - Northfield has 6% unemployment, 3 logistics training schools and 20 acres of free adjacent land.
+  - Riverside rent is $12 per square foot; 40% of customers are within 2 hours.
+  - Riverside has 3% unemployment, no logistics schools and no adjacent land.
+  - Eastgate rent is $7 per square foot; 25% of customers are within 2 hours.
+  - Eastgate has 4% unemployment, 1 logistics school and 5 acres of adjacent land.
+uncertainties:
+  - Whether a planned highway near Eastgate will be built.
+constraints:
+  - The warehouse must open within 12 months.
+reference: {best: Northfield, dominated: [Riverside], category: dominated}

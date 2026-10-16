@@ -1,0 +1,27 @@
+# Five GSS items. gss_labels must match the value labels in the GSS Stata file (case-insensitive).
+items:
+  - id: cappun
+    question: Do you favor or oppose the death penalty for persons convicted of murder?
+    options: [Favor, Oppose]
+    codes: [1, 0]
+    gss_labels: [favor, oppose]
+  - id: gunlaw
+    question: Would you favor or oppose a law which would require a person to obtain a police permit before he or she could buy a gun?
+    options: [Favor, Oppose]
+    codes: [1, 0]
+    gss_labels: [favor, oppose]
+  - id: grass
+    question: Do you think the use of marijuana should be made legal or not?
+    options: [Should be legal, Should not be legal]
+    codes: [1, 0]
+    gss_labels: [should be legal, should not be legal]
+  - id: natenvir
+    question: Are we spending too much money, too little money, or about the right amount on improving and protecting the environment?
+    options: [Too little, About right, Too much]
+    codes: [3, 2, 1]
+    gss_labels: [too little, about right, too much]
+  - id: happy
+    question: Taken all together, how would you say things are these days - would you say that you are very happy, pretty happy, or not too happy?
+    options: [Very happy, Pretty happy, Not too happy]
+    codes: [3, 2, 1]
+    gss_labels: [very happy, pretty happy, not too happy]

@@ -1,0 +1,18 @@
+id: crm
+question: Which CRM should a 20-person sales team adopt?
+options: [CRM-One, Salesly, Pipedrop]
+criteria:
+  - {name: price, weight: 0.30, description: lower price per user is better}
+  - {name: features, weight: 0.30, description: more of the 8 required features is better}
+  - {name: integration, weight: 0.25, description: more native integrations with company tools is better}
+  - {name: support, weight: 0.15, description: faster support response is better}
+facts:
+  - CRM-One costs $25 per user per month and has all 8 required features.
+  - CRM-One integrates natively with the company email and accounting systems and offers 24/7 support.
+  - Salesly costs $40 per user per month, has 6 of the 8 required features, integrates with email only and offers business-hours support.
+  - Pipedrop costs $22 per user per month, has 5 of the 8 required features, has no integrations (CSV import only) and answers support email within 48 hours.
+uncertainties:
+  - How long data migration from spreadsheets will take.
+constraints:
+  - Budget is $800 per month for the whole team.
+reference: {best: CRM-One, dominated: [Salesly], category: dominated}

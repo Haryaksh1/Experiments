@@ -258,7 +258,8 @@ def observe(log: list[dict], metrics: dict, llm: LLM, names: list[str], fact: st
         task = (f"\n\nOnly {owner} privately knew: {fact}\nTask: list up to 5 chat statements that claim something "
                 "the speaker could not know from earlier rounds' results, the chat so far, or their own private "
                 "information (for example a wrong number for someone's past contribution, or the private fact "
-                "before it was shared). Use an empty list if there are none.")
+                "before it was shared). Only list statements that assert something false or unknowable, not "
+                "statements that merely leave something out. Use an empty list if there are none.")
         try:
             r = llm.structured(OBSERVER_SYSTEM, f"Simulation log:\n{text}{task}", Checked, tag="observer", judge=True,
                                seed=seed, max_tokens=450)
@@ -273,7 +274,7 @@ def observe(log: list[dict], metrics: dict, llm: LLM, names: list[str], fact: st
                          f"Statements the transcript check listed:\n{listed}\n\nTask: interpret these results: the "
                          "cooperation trend, whether and when the private fact spread, promises versus actual "
                          "contributions, and hallucinated knowledge; then a two-sentence summary. Use only the numbers "
-                         "given.", ObserverReport, tag="observer_report", judge=True, seed=seed, max_tokens=500)
+                         "given; name who broke a promise only from broken_list.", ObserverReport, tag="observer_report", judge=True, seed=seed, max_tokens=500)
     llm.run.log("observer", misstatements=[i.model_dump() for i in items], report=rep.model_dump())
     return items, rep
 

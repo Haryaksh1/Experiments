@@ -339,3 +339,91 @@ claims by id, and the Judge cites specific claims (e.g. performance: ADV2.1, SKE
 - 3 scenarios and 1 seed; the scenarios were chosen as described above.
 - The "unsupported claim" proxy is crude: no fact cited.
 - Each agent's own system prompt means Ollama can't reuse the shared brief from its prompt cache.
+
+## Phase 4: simulation with multiple agents across multiple steps
+
+**Built** (`agents_lab/simulation_multi/`): a three-step pipeline. **Only Step 2 is multi-agent.**
+
+1. **Scenario Builder** (one agent): from [public_goods.yaml](agents_lab/evals/public_goods.yaml) it creates
+   three personas (name, age, background, goal, private information) and a world state, validated
+   against a schema (three distinct names). The private fact whose spread is measured comes from config,
+   with detection keywords, and is added to seat 0's private information by Python.
+2. **Interaction** (exactly three persona agents). Each persona is a Phase 2 `GenerativeAgent` with its own
+   memory stream, importance ratings, reflection (threshold 150) and a strategy plan made once per game.
+   Each round:
+   - every persona sends one chat message, simultaneously (it sees only earlier rounds);
+   - every persona reads the others' messages, which go into its memory;
+   - every persona privately chooses 0-10 tokens.
+
+   `scenario.py` (Python, not the LLM) applies the rules: the pot is multiplied by 1.5 and split equally,
+   and payoffs are computed. Each chat message also carries a structured `promise` (tokens committed, or
+   -1), so promises vs actions are measured exactly.
+3. **Observer** (one agent, low temperature): Python computes all numbers. These are cooperation per round
+   and trend, payoffs, when the private fact first appears in each agent's messages, any mention before
+   exposure (= knowledge not in that agent's memory), and promises kept or broken. The Observer lists
+   misstatements in the transcript, then interprets the metrics.
+
+Scenarios are pluggable: a new one implements the `Scenario` protocol in `scenario.py` (rules text,
+decision schema and task, `apply`, `outcome_text`, `metrics`).
+
+```bash
+.venv\Scripts\agents-lab simulate [--no-chat] [--bot conditional@2]
+.venv\Scripts\agents-lab eval-simulation --bots conditional@2            # quick (default)
+.venv\Scripts\agents-lab eval-simulation --bots always@2,never@2,conditional@2
+```
+
+**Conditions** (same personas, built once):
+- chat on, three LLM agents;
+- chat off;
+- a fixed-strategy bot in seat 2 (always / never / conditional cooperator). The bot posts a truthful
+  templated message. A bot seat leaves two LLM agents, so those runs are baselines, not the
+  multi-agent condition.
+
+**Simplifications:**
+- The persona plan is one strategy statement per game, not plan + decomposition (saves ~6 calls per run).
+- One importance call per agent per round rates all of that round's new memories.
+
+**Results** (8 rounds, multiplier 1.5, seed 0; 208 calls, **0 parse failures**, ~2 h;
+[examples/phase4_eval_simulation](examples/phase4_eval_simulation/summary.md), 2-round smoke run in
+[examples/phase4_smoke_2rounds](examples/phase4_smoke_2rounds/summary.md)):
+
+| Condition | Mean contribution | Trend / round | Round 1 → 8 | Promises kept | Private fact | Observer misstatements |
+|---|---|---|---|---|---|---|
+| chat, 3 LLM agents | 7.21 | -0.16 | 6.0 → 7.0 | 10 / 19 | never mentioned | 5 |
+| no chat | 6.75 | +0.29 | 4.7 → 6.7 | - | can't spread | 0 |
+| chat, conditional-cooperator bot in seat 2 | 7.42 | +0.29 | 6.7 → 7.7 | 16 / 19 | owner said it in R5; nobody repeated it | 5 |
+
+**What the numbers show** (Python-computed):
+- **Contributions stay high in every condition.** That's far above the declining pattern typical of human
+  public goods games, and suggests phi3 personas are cooperative by default.
+- **Chat raises the first round** (6.0 vs 4.7 without chat), but the chat run then dips to 0-5 in round 6.
+- **Promises are cheap:** the three LLM agents kept only 10 of 19 promises, on average giving 0.9 tokens
+  less than promised. With a truthful bot in the group, 16 of 19 were kept.
+- **The private fact (a council grant at 100 tokens) barely spread.** With three LLM agents the owner
+  never mentioned it. With the bot, she mentioned it once (R5) and no one picked it up. No agent mentioned
+  it before exposure, so there were no fact hallucinations.
+- **Each LLM agent reflected once** (threshold 150) in the chat runs; none did without chat, because there
+  are fewer memories.
+
+**Observer quality: phi3 can't be trusted to interpret, only to point.**
+- In the 2-round smoke run, before a prompt fix, it listed statements that merely omitted the fact as
+  "misstatements".
+- In the full run, its listed misstatements are real issues: agents misremember others' past
+  contributions, e.g. Maria: "I remember Luis contributing a full round of tokens in Round 4", when Luis
+  gave 9.
+- But its interpretation contradicts the Python metrics it was given. It calls the bot run "decreasing"
+  (trend +0.29), blames Luis for all 9 broken promises (Maria broke 5), and describes private-fact spread
+  that didn't happen.
+- The Python metrics are the result; the Observer text is a qualitative read with known errors.
+
+**What phi3:mini could not do reliably:**
+- interpret numbers it was handed;
+- remember who contributed what without errors, even with the outcomes in memory;
+- share strategically useful private information;
+- keep its own promises.
+
+**Known limitations:**
+- One seed and one persona set, so differences between conditions are anecdotal.
+- Only the conditional-cooperator baseline was run (always and never are available via `--bots`).
+- Fact spread is measured by keyword in messages.
+- Promise detection relies on the model's own `promise` field.

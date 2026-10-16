@@ -1,7 +1,14 @@
 # agents_lab
 
 Four agent systems sharing one core library, running fully offline on a laptop with
-`phi3:mini` (Ollama). No cloud APIs, no agent frameworks; every loop is plain Python.
+`phi3:mini` (Ollama). No cloud APIs, no agent frameworks. Every loop is plain Python.
+
+| Phase | System | Agents |
+|---|---|---|
+| 1 | Decision making: clarify, score, compute, memo | one |
+| 2 | Simulation: generative agent with memory, reflection and planning, plus a silicon survey sample with PPI++ calibration | one |
+| 3 | Decision making: Framer, then Advocate, Skeptic and Analyst debating, then Judge | three in step 2 |
+| 4 | Simulation: three generative agents in a repeated public goods game with chat, plus an Observer | three in step 2 |
 
 ## Setup
 
@@ -26,7 +33,7 @@ output, retry, token count, latency) and `summary.md`.
 - `llm.py`: `LLM.structured(system, user, Schema, tag=...)` sends the pydantic JSON schema as Ollama's
   `format`, validates the reply, and on failure re-asks with the validation error and a new seed
   (max 2 retries), then raises `LLMFailed`. Before every call it estimates prompt tokens and raises
-  `BudgetExceeded` if the prompt would not fit `num_ctx − max_tokens − 10%`; it never truncates.
+  `BudgetExceeded` if the prompt would not fit `num_ctx − max_tokens − 10%`. It never truncates.
   `OllamaBackend` (with transport retries) and a deterministic `MockBackend` for tests.
 - `trace.py`: `Run` writes the JSONL trace and a Markdown summary with per-tag calls, attempts,
   parse failure rate, tokens and latency.
@@ -44,15 +51,15 @@ retry, loud failure after 2 retries, judge temperature, budget refusal before an
 summary contents, config overrides, conversation visibility and summary windows, isolation, overflow
 → summarize. PPI++ on 3,000 synthetic replications with a constant prediction bias (n=100, N=1000,
 ρ≈0.7): estimate unbiased within Monte Carlo error, naive estimate carries the bias, variance ratio
-matches 1 − ρ²N/(N+n) within 10%, n_eff matches, 95% CI coverage within 92–98%.
+matches 1 − ρ²N/(N+n) within 10%, n_eff matches, 95% CI coverage within 92 to 98%.
 
-**Measured on this laptop** (i7-1360P, CPU only, Ollama 0.24.0, phi3:mini digest `4f222292…`;
+**Measured on this laptop** (i7-1360P, CPU only, Ollama 0.24.0, phi3:mini digest `4f222292…`,
 [examples/phase0_bench](examples/phase0_bench/summary.md)):
 
 | | 4 threads | 6 threads |
 |---|---|---|
 | prompt processing, ~1,700-token prompt | 22 tok/s | 22 tok/s |
-| generation | 8–14 tok/s | 8–14 tok/s |
+| generation | 8 to 14 tok/s | 8 to 14 tok/s |
 | parse failures (6 schema calls) | 0% | 0% |
 
 - More threads did not help, so `num_thread: 4` is kept: same speed, less heat.
@@ -82,7 +89,7 @@ with its own system prompt and memory:
    smallest single weight change (others renormalized) and the smallest single score change that flips
    the top choice, and to whom.
 4. **Memo** (1 call): rationale, confidence, key risks, evidence that would change the decision.
-   The recommendation is the Python top-ranked option; the LLM explains it but cannot override it.
+   The recommendation is the Python top-ranked option. The LLM explains it but cannot override it.
 
 ```bash
 .venv\Scripts\agents-lab decide agents_lab\evals\decision\01_laptop.yaml
@@ -90,7 +97,7 @@ with its own system prompt and memory:
 .venv\Scripts\agents-lab eval-decision --stability 10  # full: 3 seeds on all 10
 ```
 
-**What we learned getting phi3:mini to work** (each step measured on the laptop scenario):
+**What it took to get phi3:mini to work** (each step measured on the laptop scenario):
 
 | Design | Result |
 |---|---|
@@ -99,28 +106,28 @@ with its own system prompt and memory:
 | Plus a dedicated `facts: [ids]` field | Passed validation, **wrong answer** (Aero by 0.02): per-option calls have no shared scale, and every call called its option "cheapest" |
 | **One call per criterion, all options compared in it** (adopted) | 6/6 calls valid on the first try, right answer, margin 0.80 |
 
-**Eval results** (quick eval: 10 scenarios at seed 0, 3 seeds on the first 4;
+**Eval results** (quick eval: 10 scenarios at seed 0, 3 seeds on the first 4,
 [examples/phase1_eval_decision](examples/phase1_eval_decision/summary.md), single run in
 [examples/phase1_decide_laptop](examples/phase1_decide_laptop/summary.md)):
 
 | Metric | Result |
 |---|---|
-| Agreement with reference (seed 0) | 7 of 9 completed (78%, bootstrap CI 44–100%) |
+| Agreement with reference (seed 0) | 7 of 9 completed (78%, bootstrap CI 44 to 100%) |
 | by category | clear 1/1, dominated 4/5, close 2/3 |
 | Dominated option recommended | 0 of 17 runs |
 | Reference-dominated option also dominated in the model's scores | 5 of 5 |
 | Top-1 stable across 3 seeds | 4 of 4 scenarios (full ranking also 4 of 4) |
 | Parse failure rate | 5.4% of attempts (score 6.8%, clarify 0%, memo 0%) |
 | Failed runs | 1 of 18 (crm: low > mid ordering 3 times in a row) |
-| Time per scenario | ~180 s on an idle laptop; 300–960 s while other apps left < 2 GB RAM free |
+| Time per scenario | ~180 s on an idle laptop, 300 to 960 s while other apps left < 2 GB RAM free |
 
 The two misses:
 - **warehouse:** phi3 called Eastgate "best proximity" (25% of customers within 2 h, against Northfield's 70%)
   and "best" on expansion (5 acres against 20).
 - **relocation:** a close call where Lisbon and Berlin are within 0.1 by construction.
 
-**Runtime note:** the eval took 2.4 h, not the planned ~35 min. Other apps left 0.5–2.5 GB of RAM free,
-so Windows paged the model out between calls and Ollama spent 60–95 s per call reloading it. The last
+**Runtime note:** the eval took 2.4 h, not the planned ~35 min. Other apps left 0.5 to 2.5 GB of RAM free,
+so Windows paged the model out between calls and Ollama spent 60 to 95 s per call reloading it. The last
 scenarios, run after memory freed up, took ~3 min each. On an idle laptop the quick eval is ~35 min.
 Close other heavy apps before long evals.
 
@@ -132,7 +139,7 @@ justifications on the criterion being scored (they drift to other criteria).
 fact ids are right. Ten hand-written scenarios with constructed references are a small, easy-ish test,
 so the bootstrap CI is wide. Stability is measured at scorer temperature 0.1 (the brief asks for low
 temperature on scorers), so it mostly measures sampling noise at low temperature. Hard constraints
-(budget caps) are left to the scorer; Python doesn't filter infeasible options.
+(budget caps) are left to the scorer. Python doesn't filter infeasible options.
 
 ## Phase 2: simulation with one agent
 
@@ -143,14 +150,14 @@ temperature on scorers), so it mostly measures sampling noise at low temperature
   since last access). Importance is 1-10, rated by the model when memories are created, with all new
   memories of a step rated in one call. Relevance is TF-IDF cosine (`core/relevance.py`, any
   `(query, docs) -> scores` function can replace it). Top-k memories that fit the token budget are
-  returned; one that doesn't fit is skipped, never cut.
+  returned. One that doesn't fit is skipped, never cut.
 - `agent.py`: a generative agent (Park et al., scaled down) with:
-  - a day plan of 3-5 blocks, decomposed once into 4-10 timed steps;
-  - per step: store new memories (one importance call), act on the plan and new events;
+  - a day plan of 3-5 blocks, decomposed once into 4-10 timed steps
+  - per step: store new memories (one importance call), act on the plan and new events
   - a reflection when the summed importance since the last one passes the threshold (default 150): one
-    call over recent memories gives up to 3 insights, each citing the ids of the memories behind it;
+    call over recent memories gives up to 3 insights, each citing the ids of the memories behind it.
   - interviews from the CLI (a probe: the answer first lists the memory ids it uses, then gives at
-    most two sentences; it is not stored).
+    most two sentences. It is not stored).
 - `silicon.py`: **silicon-sample mode.** Many personas (from a CSV of attributes or a `backstory` column)
   each answer a survey in a separate call. **This is still single-agent: the personas never see each other
   or interact.** Each persona is a profile line, not a memory stream.
@@ -168,9 +175,9 @@ temperature on scorers), so it mostly measures sampling noise at low temperature
 It's kept in `data/gss/` (not committed). To get it, download that zip and extract `2022/GSS2022.dta` to
 `data/gss/`. Items: death penalty (`cappun`), gun permit (`gunlaw`), marijuana (`grass`), environment
 spending (`natenvir`), happiness (`happy`). Persona attributes: age, sex, race, degree, region, party,
-ideology. Only 212 respondents answered all five items (GSS split ballots); 140 were sampled at random.
-The first 40 are the "human sample"; the other 100 are simulated-only, with their real answers held out
-as truth. Unweighted; party leaners counted with their party.
+ideology. Only 212 respondents answered all five items (GSS split ballots). 140 were sampled at random.
+The first 40 are the "human sample". The other 100 are simulated-only, with their real answers held out
+as truth. Unweighted. Party leaners counted with their party.
 
 ### Persona mode results ([examples/phase2_persona](examples/phase2_persona/summary.md))
 
@@ -191,7 +198,7 @@ Diagnosis (pure Python, no model calls):
   memory (relevance 1.0) ranked 10th at 1,1,1 and 1st at relevance weight 2.
 - **TF-IDF has no synonyms.** "Money" vs "gym charged me twice", "work" vs "applications close", and
   "brother" vs "Tunde" all score 0 relevance under any weights. That's the ceiling of a lexical relevance
-  function; an embedding model would fix it but needs a download.
+  function. An embedding model would fix it but needs a download.
 - **Evidence-first answers are shorter and grounded** (0 parse failures). With weight 1,1,2 the plumber
   answer was exactly right, but phi3 still sometimes ignores a retrieved memory. Seven questions are too
   few to separate the settings.
@@ -214,7 +221,7 @@ Diagnosis (pure Python, no model calls):
   n_eff ≈ n (40-44). The estimate stays at the real-sample mean, and its CI covered the truth on all 5 items.
 - **Individual agreement is below the majority baseline** on 4 of 5 items.
 - **Flattening is strong where the model has a fixed stance:**
-  - death penalty, within-party spread at 0-0.25 of the real spread (every simulated Independent opposed);
+  - death penalty, within-party spread at 0-0.25 of the real spread (every simulated Independent opposed)
   - gun permits, 0-0.33 (Democrats and Independents).
 - On environment spending, simulated Democrats are *more* spread than real ones (ratio 2.75), which
   looks like noise rather than signal.
@@ -222,7 +229,7 @@ Diagnosis (pure Python, no model calls):
 **What phi3:mini could not do reliably:**
 - Answer opinion items in line with a demographic profile: it pushes everyone toward one stance.
 - Use a retrieved memory every time it should.
-- Find memories that share no words with the question; that's a limit of TF-IDF, not the model.
+- Find memories that share no words with the question. That's a limit of TF-IDF, not the model.
 
 **Known limitations**:
 - The keyword-based recall check is crude.
@@ -243,12 +250,12 @@ Diagnosis (pure Python, no model calls):
    - **Analyst:** checks the others' claims against the brief and flags unsupported ones.
 
    Each agent has its own system prompt and its own memory of its previous turns. Round 0 is
-   independent; then R rounds (default 2) in which each agent sees a deterministic rolling summary plus
+   independent. Then R rounds (default 2) in which each agent sees a deterministic rolling summary plus
    the previous-round turn of each other agent. Every turn is structured:
-   - the option it would pick if forced (used for conformity);
-   - a position;
-   - 1-2 claims with supporting fact numbers;
-   - at most one accepted and one rejected claim of others, by claim id, with reasons;
+   - the option it would pick if forced (used for conformity)
+   - a position
+   - 1-2 claims with supporting fact numbers
+   - at most one accepted and one rejected claim of others, by claim id, with reasons
    - for the Analyst, up to 2 flags on unsupported claims.
 
    Claim ids (e.g. `SKE1.2`) are assigned in Python. Claim references are an **enum of the ids that
@@ -272,13 +279,13 @@ Diagnosis (pure Python, no model calls):
   of C / tokens of one A sample). A sample that fails validation is dropped, but its tokens still count.
 - **C:** the full pipeline.
 - **D:** the same pipeline with the three agents unable to see each other in Step 2. Each still sees its
-  own history; the Judge still reads all turns.
+  own history. The Judge still reads all turns.
 
 **Equal budget:** B, C and D are matched on tokens. A is the unmatched reference point. Metrics:
-- accuracy against the reference and dominated-option errors;
-- ranking stability across seeds (needs `--seeds` > 1);
-- Analyst flags against a Python proxy for "unsupported" (claims citing no fact);
-- conformity: an agent abandons a preferred option that matched the reference after a round;
+- accuracy against the reference and dominated-option errors
+- ranking stability across seeds (needs `--seeds` > 1)
+- Analyst flags against a Python proxy for "unsupported" (claims citing no fact)
+- conformity: an agent abandons a preferred option that matched the reference after a round
 - tokens and wall time.
 
 **Quick-eval scenario choice:** laptop (A right in Phase 1), warehouse and relocation (A wrong in
@@ -289,7 +296,7 @@ and it is reported as such.
 14 calls, 0 parse failures, ~14 min, correct (Core 13). The agents accept, reject and flag each other's
 claims by id, and the Judge cites specific claims (e.g. performance: ADV2.1, SKE2.1).
 
-**Ablation results** (quick eval, seed 0;
+**Ablation results** (quick eval, seed 0,
 [examples/phase3_eval_multi_decision](examples/phase3_eval_multi_decision/summary.md)):
 
 | Scenario (reference) | A single | B ensemble | C pipeline | D isolated |
@@ -323,20 +330,20 @@ claims by id, and the Judge cites specific claims (e.g. performance: ADV2.1, SKE
 **Budget and runtime:**
 - **B overspent:** 33k tokens against C's 23k, because samples at temperature 0.7 broke low ≤ mid ≤ high
   often (26% of score attempts failed) and failed attempts count.
-- **Judge failures:** 33% of Judge attempts failed on the same ordering rule; one run failed outright.
+- **Judge failures:** 33% of Judge attempts failed on the same ordering rule. One run failed outright.
 - **Time per scenario:** about 1 h for A+B+C+D. D's laptop and warehouse wall times include 54- and
-  45-minute Windows standby pauses; the calls themselves took about 20 min each.
+  45-minute Windows standby pauses. The calls themselves took about 20 min each.
 - **Full eval** (10 scenarios × 3 seeds): about 30 h of compute. Not run.
 
 **What phi3:mini could not do reliably here:**
-- invent valid references (claim ids, fact numbers) unless the grammar forbids it;
-- keep strings short unless they are capped hard;
-- keep low ≤ mid ≤ high at temperature 0.7;
-- check claims against facts as the Analyst;
+- invent valid references (claim ids, fact numbers) unless the grammar forbids it
+- keep strings short unless they are capped hard
+- keep low ≤ mid ≤ high at temperature 0.7
+- check claims against facts as the Analyst
 - write a fact-faithful brief as the Framer.
 
 **Known limitations:**
-- 3 scenarios and 1 seed; the scenarios were chosen as described above.
+- 3 scenarios and 1 seed. The scenarios were chosen as described above.
 - The "unsupported claim" proxy is crude: no fact cited.
 - Each agent's own system prompt means Ollama can't reuse the shared brief from its prompt cache.
 
@@ -351,8 +358,8 @@ claims by id, and the Judge cites specific claims (e.g. performance: ADV2.1, SKE
 2. **Interaction** (exactly three persona agents). Each persona is a Phase 2 `GenerativeAgent` with its own
    memory stream, importance ratings, reflection (threshold 150) and a strategy plan made once per game.
    Each round:
-   - every persona sends one chat message, simultaneously (it sees only earlier rounds);
-   - every persona reads the others' messages, which go into its memory;
+   - every persona sends one chat message, simultaneously (it sees only earlier rounds)
+   - every persona reads the others' messages, which go into its memory
    - every persona privately chooses 0-10 tokens.
 
    `scenario.py` (Python, not the LLM) applies the rules: the pot is multiplied by 1.5 and split equally,
@@ -373,8 +380,8 @@ decision schema and task, `apply`, `outcome_text`, `metrics`).
 ```
 
 **Conditions** (same personas, built once):
-- chat on, three LLM agents;
-- chat off;
+- chat on, three LLM agents
+- chat off
 - a fixed-strategy bot in seat 2 (always / never / conditional cooperator). The bot posts a truthful
   templated message. A bot seat leaves two LLM agents, so those runs are baselines, not the
   multi-agent condition.
@@ -383,7 +390,7 @@ decision schema and task, `apply`, `outcome_text`, `metrics`).
 - The persona plan is one strategy statement per game, not plan + decomposition (saves ~6 calls per run).
 - One importance call per agent per round rates all of that round's new memories.
 
-**Results** (8 rounds, multiplier 1.5, seed 0; 208 calls, **0 parse failures**, ~2 h;
+**Results** (8 rounds, multiplier 1.5, seed 0, 208 calls, **0 parse failures**, ~2 h,
 [examples/phase4_eval_simulation](examples/phase4_eval_simulation/summary.md), 2-round smoke run in
 [examples/phase4_smoke_2rounds](examples/phase4_smoke_2rounds/summary.md)):
 
@@ -391,7 +398,7 @@ decision schema and task, `apply`, `outcome_text`, `metrics`).
 |---|---|---|---|---|---|---|
 | chat, 3 LLM agents | 7.21 | -0.16 | 6.0 → 7.0 | 10 / 19 | never mentioned | 5 |
 | no chat | 6.75 | +0.29 | 4.7 → 6.7 | - | can't spread | 0 |
-| chat, conditional-cooperator bot in seat 2 | 7.42 | +0.29 | 6.7 → 7.7 | 16 / 19 | owner said it in R5; nobody repeated it | 5 |
+| chat, conditional-cooperator bot in seat 2 | 7.42 | +0.29 | 6.7 → 7.7 | 16 / 19 | owner said it in R5, nobody repeated it | 5 |
 
 **What the numbers show** (Python-computed):
 - **Contributions stay high in every condition.** That's far above the declining pattern typical of human
@@ -402,7 +409,7 @@ decision schema and task, `apply`, `outcome_text`, `metrics`).
 - **The private fact (a council grant at 100 tokens) barely spread.** With three LLM agents the owner
   never mentioned it. With the bot, she mentioned it once (R5) and no one picked it up. No agent mentioned
   it before exposure, so there were no fact hallucinations.
-- **Each LLM agent reflected once** (threshold 150) in the chat runs; none did without chat, because there
+- **Each LLM agent reflected once** (threshold 150) in the chat runs. None did without chat, because there
   are fewer memories.
 
 **Observer quality: phi3 can't be trusted to interpret, only to point.**
@@ -414,12 +421,12 @@ decision schema and task, `apply`, `outcome_text`, `metrics`).
 - But its interpretation contradicts the Python metrics it was given. It calls the bot run "decreasing"
   (trend +0.29), blames Luis for all 9 broken promises (Maria broke 5), and describes private-fact spread
   that didn't happen.
-- The Python metrics are the result; the Observer text is a qualitative read with known errors.
+- The Python metrics are the result. The Observer text is a qualitative read with known errors.
 
 **What phi3:mini could not do reliably:**
-- interpret numbers it was handed;
-- remember who contributed what without errors, even with the outcomes in memory;
-- share strategically useful private information;
+- interpret numbers it was handed
+- remember who contributed what without errors, even with the outcomes in memory
+- share strategically useful private information
 - keep its own promises.
 
 **Known limitations:**

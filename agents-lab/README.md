@@ -10,9 +10,9 @@ Four agent systems sharing one core library, running fully offline on a laptop w
 | 3 | Decision making: Framer, then Advocate, Skeptic and Analyst debating, then Judge | three in step 2 |
 | 4 | Simulation: three generative agents in a repeated public goods game with chat, plus an Observer | three in step 2 |
 
-The full write up, covering why agents are used for simulation and decision making, the retrieval and PPI++ math, and what these experiments found, is on Medium.
+The full write up, covering the single agent and multi agent systems built here, how they compare, and the retrieval and PPI++ math behind them, is on Medium.
 
-📖 [AI Agents in Simulation and Decision Making: Cheap Laboratory or Expensive Echo?](https://medium.com/@haryakshbhardwaj/ai-agents-in-simulation-and-decision-making-cheap-laboratory-or-expensive-echo-c8c4a82a1e02)
+📖 [AI Agents for Decision Making and Simulation](https://medium.com/@haryakshbhardwaj/ai-agents-in-simulation-and-decision-making-cheap-laboratory-or-expensive-echo-c8c4a82a1e02)
 
 ## Setup
 
